@@ -7,73 +7,63 @@
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#090c10;color:#e8edf3;font-family:'Space Mono',monospace;min-height:100vh;display:flex;align-items:center;justify-content:center}
-body::before{content:'';position:fixed;inset:0;background-image:linear-gradient(rgba(0,255,170,.015) 1px,transparent 1px),linear-gradient(90deg,rgba(0,255,170,.015) 1px,transparent 1px);background-size:32px 32px;pointer-events:none}
-.login{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:40px;width:100%;max-width:400px;position:relative;z-index:1;text-align:center}
-.logo{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:8px}
+body{background:#090c10;color:#e8edf3;font-family:'Space Mono',monospace;min-height:100vh}
+.center{display:flex;align-items:center;justify-content:center;min-height:100vh}
+.login{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:40px;width:90%;max-width:400px;text-align:center}
+.logo{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:6px}
 .logo span{color:#00ffaa}
-.sub{font-size:11px;color:#5a6475;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
-input{width:100%;background:#0f1318;border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#e8edf3;font-family:'Space Mono',monospace;font-size:13px;padding:12px 16px;outline:none;margin-bottom:16px;text-align:center}
+.sub{font-size:10px;color:#5a6475;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
+input{width:100%;background:#0f1318;border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#e8edf3;font-family:'Space Mono',monospace;font-size:13px;padding:12px 16px;outline:none;margin-bottom:14px;text-align:center}
 input:focus{border-color:rgba(0,255,170,.3)}
 input::placeholder{color:#2a3444}
-button{width:100%;background:#00ffaa;color:#090c10;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:14px;cursor:pointer}
-button:hover{opacity:.9}
-.error{color:#ff4545;font-size:11px;margin-top:12px;display:none}
-.app{display:none;max-width:1200px;width:100%;padding:20px;position:relative;z-index:1}
+button{width:100%;background:#00ffaa;color:#090c10;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:14px;cursor:pointer;margin-bottom:10px}
+.err{color:#ff4545;font-size:11px;display:none;margin-top:8px}
+.app{display:none;padding:20px;max-width:1200px;margin:0 auto}
 header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:24px}
 .hlogo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
 .hlogo span{color:#00ffaa}
-.pulse{width:8px;height:8px;border-radius:50%;background:#00ffaa;animation:pulse 2s infinite;display:inline-block;margin-right:8px}
+.pulse{width:8px;height:8px;border-radius:50%;background:#00ffaa;animation:pulse 2s infinite;display:inline-block;margin-right:6px}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,170,.4)}50%{box-shadow:0 0 0 8px rgba(0,255,170,0)}}
 .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:24px}
 .stat{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;text-align:center}
 .sv{font-size:28px;font-weight:700}
 .sl{font-size:9px;color:#5a6475;margin-top:3px;letter-spacing:2px;text-transform:uppercase}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
 .card{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px}
-.card:hover{border-color:rgba(0,255,170,.25)}
 .ch{display:flex;align-items:center;gap:8px;margin-bottom:6px}
 .cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
 .cn{font-size:12px;font-weight:700;flex:1}
 .cb{font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(123,92,255,.15);color:#7b5cff}
 .cd{font-size:10px;color:#5a6475;line-height:1.5}
 .cm{display:flex;gap:10px;font-size:9px;color:#3a4455;margin-top:6px}
-.logout{font-size:10px;color:#5a6475;cursor:pointer;background:none;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:4px 10px}
-.logout:hover{color:#ff4545;border-color:rgba(255,69,69,.3)}
-.loading{color:#5a6475;font-size:12px;text-align:center;padding:40px}
+.lbtn{font-size:10px;color:#5a6475;cursor:pointer;background:none;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:4px 10px}
+.msg{text-align:center;padding:40px;color:#5a6475;font-size:12px}
 </style>
 </head>
 <body>
-<div class="login" id="loginBox">
-  <div class="logo">SW<span>ARM</span></div>
-  <div class="sub">Control Center</div>
-  <input type="password" id="keyInput" placeholder="Enter your API key..." 
-         onkeydown="if(event.key==='Enter')login()"/>
-  <button onclick="login()">Access Swarm</button>
-  <div class="error" id="err">Invalid key — access denied</div>
+<div class="center" id="loginWrap">
+  <div class="login">
+    <div class="logo">SW<span>ARM</span></div>
+    <div class="sub">Control Center</div>
+    <input type="password" id="keyInput" placeholder="Enter your API key..." onkeydown="if(event.key==='Enter')login()"/>
+    <button onclick="login()">Access Swarm</button>
+    <div class="err" id="err">Invalid key — access denied</div>
+  </div>
 </div>
-
-<div class="app" id="appBox">
+<div class="app" id="appWrap">
   <header>
     <div class="hlogo">SW<span>ARM</span></div>
     <div><span class="pulse"></span><span style="font-size:11px;color:#5a6475">Live</span></div>
-    <button class="logout" onclick="logout()">Logout</button>
+    <button class="lbtn" onclick="logout()">Logout</button>
   </header>
-  <div class="stats" id="statsBox"><div class="loading">Loading...</div></div>
-  <div class="grid" id="agentGrid"><div class="loading">Loading agents...</div></div>
+  <div class="stats" id="statsBox"><div class="msg">Loading...</div></div>
+  <div class="grid" id="agentGrid"><div class="msg">Loading agents...</div></div>
 </div>
-
 <script>
+const VALID_KEY = 'swarm_DY0dMaP9t93Wde8t8xbEZEXVSm76vT0yDtPOnwq-0gg';
 const API = 'https://217.216.59.151';
-let KEY = localStorage.getItem('swarm_key') || '';
-
-const TIERS = {
-  MOTHER:'#ff8c42',CLAUDE_CODER:'#ff8c42',QWEN3_CODER:'#7b5cff',
-  DEEPSEEK_CODER:'#4fc3f7',GROQ_CODER:'#ffb830',RESEARCHER:'#00ffaa',
-  REVIEWER:'#00ffaa',QUANTUM:'#ff4545',DEVOPS_AGENT:'#7b5cff',
-  SECURITY_AGENT:'#ff4545',EVOLUTION_AGENT:'#4fc3f7',FINANCE_AGENT:'#ffb830',
-  SOCIAL_AGENT:'#00ffaa',VIDEO_AGENT:'#7b5cff',VOICE_AGENT:'#4fc3f7'
-};
+const COLORS = {MOTHER:'#ff8c42',CLAUDE_CODER:'#ff8c42',QWEN3_CODER:'#7b5cff',DEEPSEEK_CODER:'#4fc3f7',GROQ_CODER:'#ffb830',RESEARCHER:'#00ffaa',REVIEWER:'#00ffaa',QUANTUM:'#ff4545'};
+let KEY = localStorage.getItem('swarm_key')||'';
 
 function relTime(iso){
   if(!iso) return '';
@@ -83,24 +73,15 @@ function relTime(iso){
   return Math.floor(s/3600)+'h ago';
 }
 
-async function api(path){
-  const r = await fetch(API+path, {headers:{'X-API-Key':KEY}});
-  if(r.status===403) throw new Error('forbidden'); if(!r.ok) throw new Error('network');
-  return r.json();
-}
-
-async function login(){
+function login(){
   KEY = document.getElementById('keyInput').value.trim();
-  try{
-    const data = await api('/status');
-    if(data.agents){
-      localStorage.setItem('swarm_key', KEY);
-      document.getElementById('loginBox').style.display='none';
-      document.getElementById('appBox').style.display='block';
-      loadDashboard();
-      setInterval(loadDashboard, 30000);
-    }
-  } catch(e){
+  if(KEY === VALID_KEY){
+    localStorage.setItem('swarm_key', KEY);
+    document.getElementById('loginWrap').style.display='none';
+    document.getElementById('appWrap').style.display='block';
+    loadDashboard();
+    setInterval(loadDashboard, 30000);
+  } else {
     document.getElementById('err').style.display='block';
   }
 }
@@ -112,47 +93,40 @@ function logout(){
 
 async function loadDashboard(){
   try{
-    const data = await api('/status');
-    const lb = await api('/leaderboard');
-    
+    const r = await fetch(API+'/status', {headers:{'X-API-Key':KEY}});
+    const data = await r.json();
+    const lb = await fetch(API+'/leaderboard', {headers:{'X-API-Key':KEY}}).then(r=>r.json());
     const total = data.total_learnings||0;
-    const active = data.agents?.filter(a=>a.status==='active').length||0;
+    const active = (data.agents||[]).filter(a=>a.status==='active').length;
     const top = lb.leaderboard?.[0];
-    
     document.getElementById('statsBox').innerHTML = `
-      <div class="stat"><div class="sv" style="color:#00ffaa">${data.agents?.length||0}</div><div class="sl">Agents</div></div>
+      <div class="stat"><div class="sv" style="color:#00ffaa">${(data.agents||[]).length}</div><div class="sl">Agents</div></div>
       <div class="stat"><div class="sv" style="color:#7b5cff">${total}</div><div class="sl">Learnings</div></div>
       <div class="stat"><div class="sv" style="color:#ffb830">${Math.floor(total/8)}</div><div class="sl">Cycles</div></div>
       <div class="stat"><div class="sv" style="color:#00ffaa">${active}</div><div class="sl">Active</div></div>
       <div class="stat"><div class="sv" style="color:#ff8c42">${top?.agent?.split('_')[0]||'?'}</div><div class="sl">Leader</div></div>
     `;
-    
-    document.getElementById('agentGrid').innerHTML = data.agents?.map(a=>{
-      const color = TIERS[a.name]||'#5a6475';
+    document.getElementById('agentGrid').innerHTML = (data.agents||[]).map(a=>{
+      const color = COLORS[a.name]||'#5a6475';
       const dot = a.status==='active'?'#00ffaa':'#2a3444';
       return `<div class="card">
-        <div class="ch">
-          <div class="cdot" style="background:${dot}"></div>
-          <div class="cn" style="color:${color}">${a.name.replace('_CODER','').replace('_AGENT','')}</div>
-          <div class="cb">${a.status.toUpperCase()}</div>
-        </div>
+        <div class="ch"><div class="cdot" style="background:${dot}"></div>
+        <div class="cn" style="color:${color}">${a.name.replace('_CODER','').replace('_AGENT','')}</div>
+        <div class="cb">${a.status.toUpperCase()}</div></div>
         <div class="cd">${a.last_task||'no task yet'}</div>
-        <div class="cm">
-          <span>📋 ${a.tasks||0} tasks</span>
-          <span>⭐ ${a.score||0}pts</span>
-          <span>${relTime(a.last_time)}</span>
-        </div>
+        <div class="cm"><span>📋 ${a.tasks||0} tasks</span><span>⭐ ${a.score||0}pts</span><span>${relTime(a.last_time)}</span></div>
       </div>`;
-    }).join('')||'<div class="loading">No agents found</div>';
-    
+    }).join('')||'<div class="msg">No agents</div>';
   } catch(e){
-    console.error(e);
+    document.getElementById('agentGrid').innerHTML='<div class="msg">Cannot reach API — VPS may be down</div>';
   }
 }
 
-// Auto-login if key saved
-if(KEY){
-  login();
+if(KEY === VALID_KEY){
+  document.getElementById('loginWrap').style.display='none';
+  document.getElementById('appWrap').style.display='block';
+  loadDashboard();
+  setInterval(loadDashboard,30000);
 }
 </script>
 </body>
