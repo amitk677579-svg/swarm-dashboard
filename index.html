@@ -3,130 +3,665 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>SWARM Control</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&display=swap" rel="stylesheet"/>
+<title>SWARM // NEURAL CONTROL</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Bebas+Neue&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:#090c10;color:#e8edf3;font-family:'Space Mono',monospace;min-height:100vh}
-.center{display:flex;align-items:center;justify-content:center;min-height:100vh}
-.login{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:40px;width:90%;max-width:400px;text-align:center}
-.logo{font-family:'Syne',sans-serif;font-size:32px;font-weight:800;margin-bottom:6px}
-.logo span{color:#00ffaa}
-.sub{font-size:10px;color:#5a6475;letter-spacing:3px;text-transform:uppercase;margin-bottom:32px}
-input{width:100%;background:#0f1318;border:1px solid rgba(255,255,255,.07);border-radius:10px;color:#e8edf3;font-family:'Space Mono',monospace;font-size:13px;padding:12px 16px;outline:none;margin-bottom:14px;text-align:center}
-input:focus{border-color:rgba(0,255,170,.3)}
-input::placeholder{color:#2a3444}
-button{width:100%;background:#00ffaa;color:#090c10;border:none;border-radius:10px;font-family:'Syne',sans-serif;font-weight:700;font-size:14px;padding:14px;cursor:pointer;margin-bottom:10px}
-.err{color:#ff4545;font-size:11px;display:none;margin-top:8px}
-.app{display:none;padding:20px;max-width:1200px;margin:0 auto}
-header{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid rgba(255,255,255,.07);margin-bottom:24px}
-.hlogo{font-family:'Syne',sans-serif;font-size:24px;font-weight:800}
-.hlogo span{color:#00ffaa}
-.pulse{width:8px;height:8px;border-radius:50%;background:#00ffaa;animation:pulse 2s infinite;display:inline-block;margin-right:6px}
-@keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(0,255,170,.4)}50%{box-shadow:0 0 0 8px rgba(0,255,170,0)}}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:10px;margin-bottom:24px}
-.stat{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:10px;padding:14px;text-align:center}
-.sv{font-size:28px;font-weight:700}
-.sl{font-size:9px;color:#5a6475;margin-top:3px;letter-spacing:2px;text-transform:uppercase}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.card{background:#141920;border:1px solid rgba(255,255,255,.07);border-radius:12px;padding:14px}
-.ch{display:flex;align-items:center;gap:8px;margin-bottom:6px}
-.cdot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.cn{font-size:12px;font-weight:700;flex:1}
-.cb{font-size:8px;padding:2px 7px;border-radius:4px;background:rgba(123,92,255,.15);color:#7b5cff}
-.cd{font-size:10px;color:#5a6475;line-height:1.5}
-.cm{display:flex;gap:10px;font-size:9px;color:#3a4455;margin-top:6px}
-.lbtn{font-size:10px;color:#5a6475;cursor:pointer;background:none;border:1px solid rgba(255,255,255,.07);border-radius:6px;padding:4px 10px}
-.msg{text-align:center;padding:40px;color:#5a6475;font-size:12px}
+:root {
+  --bg: #03050a;
+  --surface: #080c14;
+  --card: #0c1220;
+  --card2: #0f1628;
+  --border: rgba(255,255,255,0.06);
+  --border2: rgba(255,255,255,0.1);
+  --accent: #00f5c4;
+  --accent2: #7c3aed;
+  --amber: #f59e0b;
+  --red: #ef4444;
+  --blue: #3b82f6;
+  --pink: #ec4899;
+  --text: #e2e8f0;
+  --muted: #475569;
+  --mono: 'JetBrains Mono', monospace;
+  --display: 'Bebas Neue', sans-serif;
+  --sans: 'Inter', sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: var(--sans); min-height: 100vh; overflow-x: hidden; }
+
+/* Animated background */
+body::before {
+  content: '';
+  position: fixed; inset: 0; z-index: 0;
+  background: 
+    radial-gradient(ellipse 80% 50% at 20% 20%, rgba(0,245,196,0.03) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(124,58,237,0.04) 0%, transparent 60%),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(255,255,255,0.01) 40px, rgba(255,255,255,0.01) 41px);
+  pointer-events: none;
+}
+
+/* LOGIN */
+.login-wrap { display: flex; align-items: center; justify-content: center; min-height: 100vh; position: relative; z-index: 1; }
+.login-box {
+  width: 420px; padding: 48px;
+  background: var(--card);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+.login-box::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 1px;
+  background: linear-gradient(90deg, transparent, var(--accent), transparent);
+}
+.login-title { font-family: var(--display); font-size: 52px; letter-spacing: 4px; line-height: 1; margin-bottom: 4px; }
+.login-title span { color: var(--accent); }
+.login-sub { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 4px; text-transform: uppercase; margin-bottom: 40px; }
+.login-input {
+  width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--border2);
+  border-radius: 10px; color: var(--text); font-family: var(--mono); font-size: 13px;
+  padding: 14px 18px; outline: none; margin-bottom: 14px; text-align: center;
+  transition: border-color .2s;
+}
+.login-input:focus { border-color: var(--accent); }
+.login-input::placeholder { color: var(--muted); }
+.login-btn {
+  width: 100%; background: var(--accent); color: var(--bg); border: none;
+  border-radius: 10px; font-family: var(--display); font-size: 20px; letter-spacing: 3px;
+  padding: 14px; cursor: pointer; transition: opacity .2s;
+}
+.login-btn:hover { opacity: 0.85; }
+.login-err { color: var(--red); font-family: var(--mono); font-size: 11px; text-align: center; margin-top: 12px; display: none; }
+.login-decoration {
+  position: absolute; bottom: -40px; right: -40px; width: 200px; height: 200px;
+  border-radius: 50%; border: 1px solid rgba(0,245,196,0.1);
+}
+.login-decoration::after {
+  content: ''; position: absolute; inset: 20px; border-radius: 50%;
+  border: 1px solid rgba(0,245,196,0.06);
+}
+
+/* APP */
+.app { display: none; position: relative; z-index: 1; }
+
+/* SIDEBAR */
+.sidebar {
+  position: fixed; left: 0; top: 0; bottom: 0; width: 220px;
+  background: var(--surface); border-right: 1px solid var(--border);
+  display: flex; flex-direction: column; z-index: 100; padding: 24px 0;
+}
+.sidebar-logo { padding: 0 24px 24px; border-bottom: 1px solid var(--border); margin-bottom: 16px; }
+.sidebar-logo-text { font-family: var(--display); font-size: 28px; letter-spacing: 3px; }
+.sidebar-logo-text span { color: var(--accent); }
+.sidebar-version { font-family: var(--mono); font-size: 9px; color: var(--muted); margin-top: 2px; }
+.nav-item {
+  display: flex; align-items: center; gap: 12px; padding: 10px 24px;
+  cursor: pointer; font-size: 13px; color: var(--muted); transition: all .15s;
+  border-left: 2px solid transparent; margin: 1px 0;
+}
+.nav-item:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+.nav-item.active { color: var(--accent); border-left-color: var(--accent); background: rgba(0,245,196,0.05); }
+.nav-icon { font-size: 16px; width: 20px; text-align: center; }
+.sidebar-bottom { margin-top: auto; padding: 16px 24px; border-top: 1px solid var(--border); }
+.pulse-row { display: flex; align-items: center; gap: 8px; font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+@keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(0,245,196,.4)} 50%{box-shadow:0 0 0 6px rgba(0,245,196,0)} }
+.logout-btn { width: 100%; background: rgba(239,68,68,0.1); border: 1px solid rgba(239,68,68,0.2); color: var(--red); border-radius: 8px; font-family: var(--mono); font-size: 11px; padding: 8px; cursor: pointer; margin-top: 10px; transition: all .15s; }
+.logout-btn:hover { background: rgba(239,68,68,0.2); }
+
+/* MAIN */
+.main { margin-left: 220px; padding: 32px; min-height: 100vh; }
+
+/* PANELS */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* PAGE HEADER */
+.page-header { margin-bottom: 28px; }
+.page-title { font-family: var(--display); font-size: 36px; letter-spacing: 2px; color: var(--text); }
+.page-sub { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+/* STATS ROW */
+.stats-row { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-bottom: 28px; }
+.stat-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 20px; position: relative; overflow: hidden;
+}
+.stat-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; }
+.stat-card.green::before { background: var(--accent); }
+.stat-card.purple::before { background: var(--accent2); }
+.stat-card.amber::before { background: var(--amber); }
+.stat-card.red::before { background: var(--red); }
+.stat-card.blue::before { background: var(--blue); }
+.stat-val { font-family: var(--display); font-size: 40px; letter-spacing: 1px; line-height: 1; }
+.stat-val.green { color: var(--accent); }
+.stat-val.purple { color: var(--accent2); }
+.stat-val.amber { color: var(--amber); }
+.stat-val.red { color: var(--red); }
+.stat-val.blue { color: var(--blue); }
+.stat-label { font-family: var(--mono); font-size: 9px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; margin-top: 6px; }
+
+/* AGENT GRID */
+.agent-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.agent-card {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: 14px; padding: 18px; position: relative; overflow: hidden;
+  transition: border-color .2s, transform .15s; cursor: pointer;
+}
+.agent-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+.agent-card.active-agent { border-color: rgba(0,245,196,0.3); }
+.agent-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; }
+.agent-tier1::before { background: linear-gradient(90deg, var(--accent), transparent); }
+.agent-tier2::before { background: linear-gradient(90deg, var(--accent2), transparent); }
+.agent-tier3::before { background: linear-gradient(90deg, var(--amber), transparent); }
+.agent-tier4::before { background: linear-gradient(90deg, var(--red), transparent); }
+.agent-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.agent-name { font-family: var(--mono); font-size: 12px; font-weight: 700; }
+.agent-badge { font-family: var(--mono); font-size: 8px; padding: 3px 8px; border-radius: 4px; letter-spacing: 1px; }
+.badge-active { background: rgba(0,245,196,0.12); color: var(--accent); }
+.badge-idle { background: rgba(71,85,105,0.3); color: var(--muted); }
+.agent-task { font-size: 11px; color: var(--muted); margin-bottom: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.agent-stats { display: flex; gap: 12px; }
+.agent-stat { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.agent-stat span { color: var(--text); }
+.agent-score { font-family: var(--display); font-size: 28px; color: var(--text); position: absolute; top: 14px; right: 16px; opacity: 0.15; }
+
+/* NETWORK CANVAS */
+.network-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 28px; }
+.network-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.network-title { font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 2px; text-transform: uppercase; }
+canvas { width: 100%; display: block; }
+
+/* PROJECTS */
+.projects-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.project-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 14px;
+  padding: 18px; transition: border-color .2s, transform .15s; cursor: pointer;
+  position: relative; overflow: hidden;
+}
+.project-card:hover { border-color: rgba(255,255,255,0.15); transform: translateY(-2px); }
+.project-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 1px; background: linear-gradient(90deg, var(--accent2), transparent); }
+.project-name { font-family: var(--mono); font-size: 13px; font-weight: 700; color: var(--accent); margin-bottom: 6px; }
+.project-desc { font-size: 12px; color: var(--muted); line-height: 1.5; margin-bottom: 12px; }
+.project-meta { display: flex; align-items: center; justify-content: space-between; }
+.project-agent { font-family: var(--mono); font-size: 9px; padding: 3px 8px; border-radius: 4px; background: rgba(124,58,237,0.15); color: var(--accent2); }
+.project-lines { font-family: var(--mono); font-size: 10px; color: var(--muted); }
+.project-type { position: absolute; top: 14px; right: 14px; font-size: 18px; }
+.proj-filter { display: flex; gap: 8px; margin-bottom: 20px; }
+.proj-filter-btn { font-family: var(--mono); font-size: 10px; padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: var(--card); color: var(--muted); cursor: pointer; transition: all .15s; }
+.proj-filter-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,245,196,0.08); }
+
+/* LEADERBOARD */
+.lb-list { display: flex; flex-direction: column; gap: 10px; }
+.lb-row {
+  background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+  padding: 16px 20px; display: flex; align-items: center; gap: 16px;
+  transition: border-color .15s;
+}
+.lb-row:hover { border-color: rgba(255,255,255,0.12); }
+.lb-row.r1 { border-left: 3px solid var(--amber); }
+.lb-row.r2 { border-left: 3px solid #94a3b8; }
+.lb-row.r3 { border-left: 3px solid #b45309; }
+.lb-rank { font-family: var(--display); font-size: 28px; min-width: 40px; }
+.r1 .lb-rank { color: var(--amber); }
+.r2 .lb-rank { color: #94a3b8; }
+.r3 .lb-rank { color: #b45309; }
+.lb-info { flex: 1; }
+.lb-name { font-family: var(--mono); font-size: 13px; font-weight: 700; margin-bottom: 3px; }
+.lb-details { font-size: 11px; color: var(--muted); }
+.lb-score { font-family: var(--display); font-size: 36px; color: var(--accent); }
+.lb-bar-wrap { width: 120px; height: 4px; background: rgba(255,255,255,0.06); border-radius: 2px; overflow: hidden; }
+.lb-bar { height: 100%; background: var(--accent); border-radius: 2px; transition: width .5s ease; }
+
+/* FEED */
+.feed-list { display: flex; flex-direction: column; gap: 10px; max-height: 600px; overflow-y: auto; }
+.feed-list::-webkit-scrollbar { width: 3px; }
+.feed-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+.feed-item { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 14px 16px; animation: slideIn .3s ease; }
+@keyframes slideIn { from{opacity:0;transform:translateX(-10px)} to{opacity:1;transform:none} }
+.feed-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.feed-agent { font-family: var(--mono); font-size: 11px; font-weight: 700; }
+.feed-time { font-family: var(--mono); font-size: 9px; color: var(--muted); }
+.feed-principle { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+.feed-insight { font-size: 12px; line-height: 1.5; }
+.feed-tag { display: inline-block; font-family: var(--mono); font-size: 8px; padding: 2px 8px; border-radius: 4px; background: rgba(124,58,237,0.12); color: var(--accent2); margin-top: 6px; }
+
+/* SECTION HEADER */
+.section-hdr { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
+.section-title { font-family: var(--mono); font-size: 10px; color: var(--muted); letter-spacing: 3px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+.section-title::after { content: ''; flex: 0 0 40px; height: 1px; background: var(--border); }
+.refresh-btn { font-family: var(--mono); font-size: 9px; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 6px; padding: 5px 10px; cursor: pointer; }
+.refresh-btn:hover { color: var(--text); }
+
+/* TWO COLUMNS */
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 </style>
 </head>
 <body>
-<div class="center" id="loginWrap">
-  <div class="login">
-    <div class="logo">SW<span>ARM</span></div>
-    <div class="sub">Control Center</div>
-    <input type="password" id="keyInput" placeholder="Enter your API key..." onkeydown="if(event.key==='Enter')login()"/>
-    <button onclick="login()">Access Swarm</button>
-    <div class="err" id="err">Invalid key — access denied</div>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="loginWrap">
+  <div class="login-box">
+    <div class="login-decoration"></div>
+    <div class="login-title">SW<span>ARM</span></div>
+    <div class="login-sub">Neural Control Center v4</div>
+    <input type="password" class="login-input" id="keyInput" placeholder="enter access key..." onkeydown="if(event.key==='Enter')login()"/>
+    <button class="login-btn" onclick="login()">ACCESS SWARM</button>
+    <div class="login-err" id="loginErr">⛔ Invalid key — access denied</div>
   </div>
 </div>
+
+<!-- APP -->
 <div class="app" id="appWrap">
-  <header>
-    <div class="hlogo">SW<span>ARM</span></div>
-    <div><span class="pulse"></span><span style="font-size:11px;color:#5a6475">Live</span></div>
-    <button class="lbtn" onclick="logout()">Logout</button>
-  </header>
-  <div class="stats" id="statsBox"><div class="msg">Loading...</div></div>
-  <div class="grid" id="agentGrid"><div class="msg">Loading agents...</div></div>
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <div class="sidebar-logo-text">SW<span>ARM</span></div>
+      <div class="sidebar-version">v4.0 // NEURAL</div>
+    </div>
+    <div class="nav-item active" onclick="showPanel('overview')"><span class="nav-icon">⬡</span> Overview</div>
+    <div class="nav-item" onclick="showPanel('agents')"><span class="nav-icon">◈</span> Agents</div>
+    <div class="nav-item" onclick="showPanel('projects')"><span class="nav-icon">◉</span> Projects</div>
+    <div class="nav-item" onclick="showPanel('leaderboard')"><span class="nav-icon">▲</span> Leaderboard</div>
+    <div class="nav-item" onclick="showPanel('feed')"><span class="nav-icon">≋</span> Feed</div>
+    <div class="sidebar-bottom">
+      <div class="pulse-row"><div class="pulse"></div> Live — Mumbai VPS</div>
+      <button class="logout-btn" onclick="logout()">⏻ LOGOUT</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+
+    <!-- OVERVIEW PANEL -->
+    <div class="panel active" id="panel-overview">
+      <div class="page-header">
+        <div class="page-title">OVERVIEW</div>
+        <div class="page-sub" id="overviewTime">Loading swarm intelligence...</div>
+      </div>
+      <div class="stats-row" id="statsRow">
+        <div class="stat-card green"><div class="stat-val green" id="s-agents">—</div><div class="stat-label">Agents</div></div>
+        <div class="stat-card purple"><div class="stat-val purple" id="s-learn">—</div><div class="stat-label">Learnings</div></div>
+        <div class="stat-card amber"><div class="stat-val amber" id="s-cycles">—</div><div class="stat-label">Cycles</div></div>
+        <div class="stat-card blue"><div class="stat-val blue" id="s-projects">—</div><div class="stat-label">Projects Built</div></div>
+        <div class="stat-card red"><div class="stat-val red" id="s-leader">—</div><div class="stat-label">Leader</div></div>
+      </div>
+      <div class="network-wrap">
+        <div class="network-header">
+          <div class="network-title">Agent Neural Network</div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--muted)" id="consensusText">GHZ Consensus: loading...</div>
+        </div>
+        <canvas id="networkCanvas" height="300"></canvas>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="section-hdr"><div class="section-title">Recent Activity</div></div>
+          <div class="feed-list" id="overviewFeed" style="max-height:280px"></div>
+        </div>
+        <div>
+          <div class="section-hdr"><div class="section-title">Top Agents</div></div>
+          <div class="lb-list" id="overviewLb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AGENTS PANEL -->
+    <div class="panel" id="panel-agents">
+      <div class="page-header">
+        <div class="page-title">AGENTS</div>
+        <div class="page-sub">15 specialized agents — quantum-inspired learning</div>
+      </div>
+      <div class="agent-grid" id="agentGrid"></div>
+    </div>
+
+    <!-- PROJECTS PANEL -->
+    <div class="panel" id="panel-projects">
+      <div class="page-header">
+        <div class="page-title">PROJECTS</div>
+        <div class="page-sub" id="projectsSub">Loading all built projects...</div>
+      </div>
+      <div class="proj-filter" id="projFilter">
+        <div class="proj-filter-btn active" onclick="filterProjects('all',this)">ALL</div>
+        <div class="proj-filter-btn" onclick="filterProjects('trading',this)">TRADING</div>
+        <div class="proj-filter-btn" onclick="filterProjects('scraper',this)">SCRAPERS</div>
+        <div class="proj-filter-btn" onclick="filterProjects('discord',this)">DISCORD</div>
+        <div class="proj-filter-btn" onclick="filterProjects('pipeline',this)">PIPELINES</div>
+        <div class="proj-filter-btn" onclick="filterProjects('security',this)">SECURITY</div>
+        <div class="proj-filter-btn" onclick="filterProjects('health',this)">HEALTH</div>
+        <div class="proj-filter-btn" onclick="filterProjects('html',this)">WEB APPS</div>
+      </div>
+      <div class="projects-grid" id="projectsGrid"></div>
+    </div>
+
+    <!-- LEADERBOARD PANEL -->
+    <div class="panel" id="panel-leaderboard">
+      <div class="page-header">
+        <div class="page-title">LEADERBOARD</div>
+        <div class="page-sub">Agent performance rankings — scored by tasks × principles</div>
+      </div>
+      <div class="lb-list" id="lbList"></div>
+    </div>
+
+    <!-- FEED PANEL -->
+    <div class="panel" id="panel-feed">
+      <div class="page-header">
+        <div class="page-title">LEARNING FEED</div>
+        <div class="page-sub">Real-time quantum principle applications</div>
+      </div>
+      <div class="section-hdr"><div class="section-title">Latest</div><button class="refresh-btn" onclick="loadFeed()">↻ refresh</button></div>
+      <div class="feed-list" id="feedList" style="max-height:none"></div>
+    </div>
+
+  </div>
 </div>
+
 <script>
 const VALID_KEY = 'swarm_DY0dMaP9t93Wde8t8xbEZEXVSm76vT0yDtPOnwq-0gg';
 const API = 'https://217.216.59.151';
-const COLORS = {MOTHER:'#ff8c42',CLAUDE_CODER:'#ff8c42',QWEN3_CODER:'#7b5cff',DEEPSEEK_CODER:'#4fc3f7',GROQ_CODER:'#ffb830',RESEARCHER:'#00ffaa',REVIEWER:'#00ffaa',QUANTUM:'#ff4545'};
 let KEY = localStorage.getItem('swarm_key')||'';
 
-function relTime(iso){
+const AGENT_COLORS = {
+  MOTHER:'#f59e0b', CLAUDE_CODER:'#f97316', QWEN3_CODER:'#7c3aed',
+  DEEPSEEK_CODER:'#3b82f6', GROQ_CODER:'#eab308', RESEARCHER:'#00f5c4',
+  REVIEWER:'#10b981', QUANTUM:'#ef4444', DEVOPS_AGENT:'#8b5cf6',
+  SECURITY_AGENT:'#ef4444', EVOLUTION_AGENT:'#06b6d4', FINANCE_AGENT:'#f59e0b',
+  SOCIAL_AGENT:'#ec4899', VIDEO_AGENT:'#a855f7', VOICE_AGENT:'#14b8a6'
+};
+
+const AGENT_TIERS = {
+  MOTHER:'tier1', CLAUDE_CODER:'tier1', QWEN3_CODER:'tier2', DEEPSEEK_CODER:'tier2',
+  GROQ_CODER:'tier3', RESEARCHER:'tier3', REVIEWER:'tier3', QUANTUM:'tier4'
+};
+
+// All built projects (static list from workspace scan)
+const ALL_PROJECTS = [
+  {name:'rate_limit_manager',desc:'Instagram rate-limit manager with adaptive throttling, exponential backoff and human-behavior mimicking jitter delays.',agent:'IGBOT_AGENT',lines:872,type:'security',icon:'🔐'},
+  {name:'dynamic_spread_controller',desc:'Real-time ATR-based volatility spread controller for Hummingbot. Fetches OHLCV via CCXT, calculates optimal bid/ask spreads.',agent:'HUMMINGBOT_AGENT',lines:556,type:'trading',icon:'📈'},
+  {name:'token_usage_auditor',desc:'Token usage monitoring for ScrapeGraphAI pipelines. Tracks LLM consumption across endpoints.',agent:'SCRAPEGRAPH_AGENT',lines:743,type:'monitor',icon:'📊'},
+  {name:'validate_api_sync',desc:'FastAPI OpenAPI schema validator that syncs with TypeScript client files automatically.',agent:'FASTAPI_AGENT',lines:742,type:'pipeline',icon:'⚡'},
+  {name:'bbc_scraper',desc:'Production BBC news scraper using requests and BeautifulSoup with content extraction.',agent:'CLAUDE_CODER',lines:196,type:'scraper',icon:'🕷'},
+  {name:'leon_skill_performance_profiler',desc:'Instruments Leon AI assistant Node.js skill bridge with timing wrappers. Captures p95/p99 latency, error rates.',agent:'LEON_AGENT',lines:180,type:'monitor',icon:'⏱'},
+  {name:'compat_matrix',desc:'PyPI dependency compatibility matrix generator for MusicBot. Color-coded safety indicators.',agent:'MUSICBOT_AGENT',lines:165,type:'pipeline',icon:'🧩'},
+  {name:'health_monitor',desc:'Async health monitor for Discord bots. Probes OpenAI API, Discord gateway latency, token burn rate.',agent:'GPT_DISCORD_AGENT',lines:160,type:'health',icon:'💊'},
+  {name:'dependency_guardian',desc:'Automated dependency vulnerability scanner with CVE database lookups and fix suggestions.',agent:'CLAUDE_CODER',lines:145,type:'security',icon:'🛡'},
+  {name:'arbitrage_detector',desc:'Cross-exchange arbitrage opportunity detector with real-time price feed integration.',agent:'HUMMINGBOT_AGENT',lines:140,type:'trading',icon:'💱'},
+  {name:'proxy_stealth_manager',desc:'Stealth proxy rotation manager with fingerprint randomization and bot-detection evasion.',agent:'CLAUDE_CODER',lines:138,type:'security',icon:'🥷'},
+  {name:'culture_radar',desc:'Cultural trend radar that monitors social platforms for emerging content patterns.',agent:'CLAUDE_CODER',lines:135,type:'scraper',icon:'📡'},
+  {name:'graph_visualizer',desc:'Knowledge graph visualizer for codebase relationships. Generates interactive D3.js diagrams.',agent:'CLAUDE_CODER',lines:130,type:'pipeline',icon:'🕸'},
+  {name:'discord_handler',desc:'Advanced Discord event handler with rate limiting, webhook management and embed builders.',agent:'DISCORDPY_AGENT',lines:128,type:'discord',icon:'💬'},
+  {name:'pipeline_health_monitor',desc:'Real-time data pipeline health monitor with alerting, drift detection and auto-recovery.',agent:'FASTAPI_AGENT',lines:125,type:'health',icon:'🏥'},
+  {name:'ytdlp_guardian',desc:'yt-dlp session manager with cookie rotation, proxy support and format optimization.',agent:'MUSICBOT_AGENT',lines:122,type:'scraper',icon:'📺'},
+  {name:'slash_commands',desc:'Discord slash command framework with permission system, cooldowns and help generation.',agent:'DISCORDPY_AGENT',lines:118,type:'discord',icon:'⚔'},
+  {name:'instagram_graph_client',desc:'Instagram Graph API client with rate limiting, media upload and analytics endpoints.',agent:'IGBOT_AGENT',lines:115,type:'scraper',icon:'📸'},
+  {name:'adaptive_orchestrator',desc:'Adaptive multi-agent task orchestrator using capability-based routing and load balancing.',agent:'CLAUDE_CODER',lines:112,type:'pipeline',icon:'🎯'},
+  {name:'sentiment_bridge',desc:'Real-time sentiment analysis bridge connecting Reddit/Twitter feeds to trading signals.',agent:'CLAUDE_CODER',lines:108,type:'trading',icon:'🧠'},
+  // HTML Web Apps
+  {name:'dashboard_ui',desc:'Full responsive dark-theme analytics dashboard with real-time charts and data tables.',agent:'CLAUDE_CODER',lines:894,type:'html',icon:'🖥'},
+  {name:'trading_terminal',desc:'Web-based trading terminal UI with order book, charts, position tracker and P&L display.',agent:'HUMMINGBOT_AGENT',lines:878,type:'html',icon:'📊'},
+  {name:'market_monitor',desc:'Real-time market monitoring web app with heatmaps, trend indicators and alert system.',agent:'CLAUDE_CODER',lines:860,type:'html',icon:'📈'},
+  {name:'portfolio_tracker',desc:'Interactive portfolio tracking web app with performance charts and allocation breakdowns.',agent:'CLAUDE_CODER',lines:773,type:'html',icon:'💼'},
+];
+
+function relTime(iso) {
   if(!iso) return '';
-  const s=Math.round((new Date()-new Date(iso))/1000);
-  if(s<60) return s+'s ago';
-  if(s<3600) return Math.floor(s/60)+'m ago';
-  return Math.floor(s/3600)+'h ago';
+  const s = Math.round((new Date() - new Date(iso)) / 1000);
+  if(s < 60) return s+'s ago';
+  if(s < 3600) return Math.floor(s/60)+'m ago';
+  if(s < 86400) return Math.floor(s/3600)+'h ago';
+  return Math.floor(s/86400)+'d ago';
 }
 
-function login(){
+async function apiFetch(path) {
+  const r = await fetch(API + path, {headers: {'X-API-Key': KEY}});
+  return r.json();
+}
+
+function login() {
   KEY = document.getElementById('keyInput').value.trim();
-  if(KEY === VALID_KEY){
+  if(KEY === VALID_KEY) {
     localStorage.setItem('swarm_key', KEY);
-    document.getElementById('loginWrap').style.display='none';
-    document.getElementById('appWrap').style.display='block';
-    loadDashboard();
-    setInterval(loadDashboard, 30000);
+    document.getElementById('loginWrap').style.display = 'none';
+    document.getElementById('appWrap').style.display = 'block';
+    initDashboard();
   } else {
-    document.getElementById('err').style.display='block';
+    document.getElementById('loginErr').style.display = 'block';
   }
 }
 
-function logout(){
+function logout() {
   localStorage.removeItem('swarm_key');
   location.reload();
 }
 
-async function loadDashboard(){
-  try{
-    const r = await fetch(API+'/status', {headers:{'X-API-Key':KEY}});
-    const data = await r.json();
-    const lb = await fetch(API+'/leaderboard', {headers:{'X-API-Key':KEY}}).then(r=>r.json());
-    const total = data.total_learnings||0;
-    const active = (data.agents||[]).filter(a=>a.status==='active').length;
-    const top = lb.leaderboard?.[0];
-    document.getElementById('statsBox').innerHTML = `
-      <div class="stat"><div class="sv" style="color:#00ffaa">${(data.agents||[]).length}</div><div class="sl">Agents</div></div>
-      <div class="stat"><div class="sv" style="color:#7b5cff">${total}</div><div class="sl">Learnings</div></div>
-      <div class="stat"><div class="sv" style="color:#ffb830">${Math.floor(total/8)}</div><div class="sl">Cycles</div></div>
-      <div class="stat"><div class="sv" style="color:#00ffaa">${active}</div><div class="sl">Active</div></div>
-      <div class="stat"><div class="sv" style="color:#ff8c42">${top?.agent?.split('_')[0]||'?'}</div><div class="sl">Leader</div></div>
-    `;
-    document.getElementById('agentGrid').innerHTML = (data.agents||[]).map(a=>{
-      const color = COLORS[a.name]||'#5a6475';
-      const dot = a.status==='active'?'#00ffaa':'#2a3444';
-      return `<div class="card">
-        <div class="ch"><div class="cdot" style="background:${dot}"></div>
-        <div class="cn" style="color:${color}">${a.name.replace('_CODER','').replace('_AGENT','')}</div>
-        <div class="cb">${a.status.toUpperCase()}</div></div>
-        <div class="cd">${a.last_task||'no task yet'}</div>
-        <div class="cm"><span>📋 ${a.tasks||0} tasks</span><span>⭐ ${a.score||0}pts</span><span>${relTime(a.last_time)}</span></div>
-      </div>`;
-    }).join('')||'<div class="msg">No agents</div>';
-  } catch(e){
-    document.getElementById('agentGrid').innerHTML='<div class="msg">Cannot reach API — VPS may be down</div>';
-  }
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if(name === 'projects') loadProjects();
+  if(name === 'leaderboard') loadLeaderboard();
+  if(name === 'feed') loadFeed();
+  if(name === 'agents') loadAgents();
 }
 
-if(KEY === VALID_KEY){
-  document.getElementById('loginWrap').style.display='none';
-  document.getElementById('appWrap').style.display='block';
-  loadDashboard();
-  setInterval(loadDashboard,30000);
+async function initDashboard() {
+  try {
+    const [status, lb, consensus] = await Promise.all([
+      apiFetch('/status'),
+      apiFetch('/leaderboard'),
+      apiFetch('/consensus')
+    ]);
+    
+    // Stats
+    document.getElementById('s-agents').textContent = status.agents?.length || 15;
+    document.getElementById('s-learn').textContent = status.total_learnings || 0;
+    document.getElementById('s-cycles').textContent = Math.floor((status.total_learnings||0)/8);
+    document.getElementById('s-projects').textContent = ALL_PROJECTS.length;
+    const top = lb.leaderboard?.[0];
+    document.getElementById('s-leader').textContent = top?.agent?.split('_')[0] || '?';
+    document.getElementById('overviewTime').textContent = `Last updated: ${new Date().toLocaleTimeString()} — ${status.total_learnings} total learnings across 66 repos`;
+    document.getElementById('consensusText').textContent = `GHZ Consensus: ${consensus.consensus || 'computing...'}`;
+    
+    // Network
+    drawNetwork(status.agents || []);
+    
+    // Overview feed (last 6)
+    const learnings = await apiFetch('/learnings?limit=6');
+    renderFeedItems(document.getElementById('overviewFeed'), [...(learnings.learnings||[])].reverse());
+    
+    // Overview leaderboard (top 5)
+    renderLbItems(document.getElementById('overviewLb'), lb.leaderboard?.slice(0,5) || [], true);
+    
+  } catch(e) {
+    console.error(e);
+  }
+  
+  setTimeout(initDashboard, 30000);
+}
+
+async function loadAgents() {
+  try {
+    const status = await apiFetch('/status');
+    const grid = document.getElementById('agentGrid');
+    const agents = status.agents || [];
+    grid.innerHTML = agents.map(a => {
+      const color = AGENT_COLORS[a.name] || '#475569';
+      const tier = AGENT_TIERS[a.name] || 'tier3';
+      return `<div class="agent-card agent-${tier} ${a.status==='active'?'active-agent':''}">
+        <div class="agent-score">${a.tasks||0}</div>
+        <div class="agent-header">
+          <div class="agent-name" style="color:${color}">${a.name.replace('_CODER','').replace('_AGENT','')}</div>
+          <div class="agent-badge ${a.status==='active'?'badge-active':'badge-idle'}">${a.status.toUpperCase()}</div>
+        </div>
+        <div class="agent-task">${a.last_task || 'awaiting task'}</div>
+        <div class="agent-stats">
+          <div class="agent-stat">tasks <span>${a.tasks||0}</span></div>
+          <div class="agent-stat">score <span>${a.score||0}</span></div>
+          <div class="agent-stat">${relTime(a.last_time)}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } catch(e) {}
+}
+
+function loadProjects(filter = 'all') {
+  const filtered = filter === 'all' ? ALL_PROJECTS : ALL_PROJECTS.filter(p => p.type === filter);
+  document.getElementById('projectsSub').textContent = `${filtered.length} projects built autonomously by swarm agents`;
+  document.getElementById('projectsGrid').innerHTML = filtered.map(p => `
+    <div class="project-card">
+      <div class="project-type">${p.icon}</div>
+      <div class="project-name">${p.name}.${p.type==='html'?'html':'py'}</div>
+      <div class="project-desc">${p.desc}</div>
+      <div class="project-meta">
+        <div class="project-agent">${p.agent}</div>
+        <div class="project-lines">${p.lines} lines</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterProjects(type, el) {
+  document.querySelectorAll('.proj-filter-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  loadProjects(type);
+}
+
+async function loadLeaderboard() {
+  try {
+    const lb = await apiFetch('/leaderboard');
+    renderLbItems(document.getElementById('lbList'), lb.leaderboard || [], false);
+  } catch(e) {}
+}
+
+function renderLbItems(el, items, compact) {
+  const max = items[0]?.score || 1;
+  const medals = ['1','2','3','4','5','6','7','8'];
+  el.innerHTML = items.map((a,i) => `
+    <div class="lb-row ${i===0?'r1':i===1?'r2':i===2?'r3':''}">
+      <div class="lb-rank">${medals[i]||i+1}</div>
+      <div class="lb-info">
+        <div class="lb-name">${a.agent}</div>
+        ${!compact ? `<div class="lb-details">${a.tasks||0} tasks · ${(a.principles_used||[]).length} principles · ${(a.principles_used||[]).join(', ')}</div>` : ''}
+      </div>
+      ${!compact ? `<div class="lb-bar-wrap"><div class="lb-bar" style="width:${Math.round(((a.score||0)/max)*100)}%"></div></div>` : ''}
+      <div class="lb-score">${a.score||0}</div>
+    </div>
+  `).join('');
+}
+
+async function loadFeed() {
+  try {
+    const data = await apiFetch('/learnings?limit=50');
+    renderFeedItems(document.getElementById('feedList'), [...(data.learnings||[])].reverse());
+  } catch(e) {}
+}
+
+function renderFeedItems(el, items) {
+  const colors = {MOTHER:'#f59e0b',CLAUDE_CODER:'#f97316',QWEN3_CODER:'#7c3aed',DEEPSEEK_CODER:'#3b82f6',GROQ_CODER:'#eab308',RESEARCHER:'#00f5c4',REVIEWER:'#10b981',QUANTUM:'#ef4444'};
+  el.innerHTML = items.map(l => `
+    <div class="feed-item">
+      <div class="feed-top">
+        <div class="feed-agent" style="color:${colors[l.agent]||'#00f5c4'}">${l.agent||'?'}</div>
+        <div class="feed-time">${relTime(l.timestamp)}</div>
+      </div>
+      <div class="feed-principle">${l.principle||''}</div>
+      <div class="feed-insight">${l.insight||l.task||''}</div>
+      <span class="feed-tag">${l.task||''}</span>
+    </div>
+  `).join('') || '<div style="text-align:center;padding:32px;color:var(--muted);font-family:var(--mono);font-size:12px">No learnings yet</div>';
+}
+
+// NEURAL NETWORK CANVAS
+function drawNetwork(agents) {
+  const canvas = document.getElementById('networkCanvas');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.parentElement.offsetWidth - 40;
+  canvas.width = W; canvas.height = 300;
+  
+  const allAgents = ['MOTHER','CLAUDE_CODER','QWEN3_CODER','DEEPSEEK_CODER','GROQ_CODER','RESEARCHER','REVIEWER','QUANTUM','DEVOPS_AGENT','SECURITY_AGENT','EVOLUTION_AGENT','FINANCE_AGENT','SOCIAL_AGENT','VIDEO_AGENT','VOICE_AGENT'];
+  const statusMap = {};
+  agents.forEach(a => statusMap[a.name] = a);
+  
+  // Position agents in a circle
+  const cx = W/2, cy = 150, r = 110;
+  const positions = {};
+  allAgents.forEach((name, i) => {
+    const angle = (i / allAgents.length) * Math.PI * 2 - Math.PI/2;
+    positions[name] = { x: cx + Math.cos(angle)*r, y: cy + Math.sin(angle)*r };
+  });
+  
+  // Draw connections
+  const connections = [
+    ['MOTHER','CLAUDE_CODER'],['MOTHER','QWEN3_CODER'],['MOTHER','DEEPSEEK_CODER'],
+    ['MOTHER','GROQ_CODER'],['MOTHER','RESEARCHER'],['MOTHER','QUANTUM'],
+    ['CLAUDE_CODER','QWEN3_CODER'],['DEEPSEEK_CODER','GROQ_CODER'],
+    ['RESEARCHER','REVIEWER'],['QUANTUM','EVOLUTION_AGENT'],
+    ['DEVOPS_AGENT','MOTHER'],['SECURITY_AGENT','REVIEWER'],
+    ['FINANCE_AGENT','RESEARCHER'],['SOCIAL_AGENT','MOTHER'],
+  ];
+  
+  connections.forEach(([a,b]) => {
+    if(!positions[a]||!positions[b]) return;
+    ctx.beginPath();
+    ctx.moveTo(positions[a].x, positions[a].y);
+    ctx.lineTo(positions[b].x, positions[b].y);
+    ctx.strokeStyle = 'rgba(0,245,196,0.08)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+  
+  // Draw nodes
+  allAgents.forEach(name => {
+    const pos = positions[name];
+    const color = AGENT_COLORS[name] || '#475569';
+    const agent = statusMap[name];
+    const active = agent?.status === 'active';
+    
+    // Glow
+    if(active) {
+      const grad = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 20);
+      grad.addColorStop(0, color + '40');
+      grad.addColorStop(1, 'transparent');
+      ctx.beginPath(); ctx.arc(pos.x, pos.y, 20, 0, Math.PI*2);
+      ctx.fillStyle = grad; ctx.fill();
+    }
+    
+    // Node
+    ctx.beginPath(); ctx.arc(pos.x, pos.y, active ? 7 : 5, 0, Math.PI*2);
+    ctx.fillStyle = active ? color : '#1e293b';
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 1.5;
+    ctx.fill(); ctx.stroke();
+    
+    // Label
+    const label = name.replace('_CODER','').replace('_AGENT','');
+    ctx.fillStyle = active ? color : '#475569';
+    ctx.font = '9px JetBrains Mono';
+    ctx.textAlign = 'center';
+    const angle = Math.atan2(pos.y - cy, pos.x - cx);
+    const lx = pos.x + Math.cos(angle)*18;
+    const ly = pos.y + Math.sin(angle)*18 + 3;
+    ctx.fillText(label, lx, ly);
+  });
+  
+  // Center — MOTHER label
+  ctx.fillStyle = 'rgba(0,245,196,0.6)';
+  ctx.font = 'bold 11px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('SWARM', cx, cy-8);
+  ctx.fillStyle = 'rgba(0,245,196,0.3)';
+  ctx.font = '9px JetBrains Mono';
+  ctx.fillText('NEURAL MESH', cx, cy+6);
+}
+
+// Auto login
+if(KEY === VALID_KEY) {
+  document.getElementById('loginWrap').style.display = 'none';
+  document.getElementById('appWrap').style.display = 'block';
+  initDashboard();
+  loadProjects();
 }
 </script>
 </body>
